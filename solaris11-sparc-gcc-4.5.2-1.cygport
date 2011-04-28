@@ -1,0 +1,80 @@
+TOOLCHAIN_TARGET="sparc-sun-solaris2.11"
+ORIG_PN="gcc"
+inherit toolchain
+
+DESCRIPTION="GCC for Solaris SPARC toolchain"
+HOMEPAGE="http://gcc.gnu.org/"
+
+case ${#PV[3]} in
+8)	snapshot_v="${PV[1]}.${PV[2]}-${PV[3]}"
+	SRC_URI="mirror://gcc/snapshots/${snapshot_v}/gcc-core-${snapshot_v}.tar.bz2
+		mirror://gcc/snapshots/${snapshot_v}/gcc-fortran-${snapshot_v}.tar.bz2
+		mirror://gcc/snapshots/${snapshot_v}/gcc-g++-${snapshot_v}.tar.bz2"
+	SRC_DIR="gcc-${snapshot_v}"
+	;;
+*)	SRC_URI="mirror://gnu/gcc/gcc-${PV}/gcc-core-${PV}.tar.bz2
+		mirror://gnu/gcc/gcc-${PV}/gcc-fortran-${PV}.tar.bz2
+		mirror://gnu/gcc/gcc-${PV}/gcc-g++-${PV}.tar.bz2"
+	SRC_DIR="gcc-${PV}"
+	;;
+esac
+
+PATCH_URI="config-rpath.patch"
+
+PKG_NAMES="${PN} ${PN}-core ${PN}-g++ ${PN}-fortran"
+
+# Building and using GCC for Solaris requires its C and Math libraries.
+# cygport comes with a "pkgrip" script which can be run on the Solaris
+# host to easily create tarballs from the the corresponding package contents:
+#
+# ./pkgrip system/header system/library developer/library/lint header-math math
+#
+# (Solaris 11 Express VirtualBox image: not all of these are in default install)
+#
+# Then transfer the tarballs to Cygwin and unpack them into the sysroot:
+#
+# mkdir -p /usr/i386-pc-solaris2.11/sys-root;
+# for p in system-header system-library developer-library-lint header-math math; \
+#   do tar jxf $p-0.5.11.tar.gz -C /usr/i386-pc-solaris2.11/sys-root; done
+#
+# Alternatively, mount/unpack the Solaris 11 Express Repository Image and use
+# the "pkgreporip" script to build the packages in question. e.g.:
+#
+# ./pkgreporip repo/publisher/solaris/pkg/system%2Fheader/0.5.11... \
+#     repo/publisher/solaris/pkg/system%2Flibrary/0.5.11... \
+#     repo/publisher/solaris/pkg/system%2Flibrary%2Fmath/0.5.11... \
+#     repo/publisher/solaris/pkg/system%2Flibrary%2Fmath%2Fheader-math/0.5.11... \
+#     repo/publisher/solaris/pkg/developer%2Flibrary%2Flint/0.5.11...
+#
+# Then transfer the tarballs to Cygwin and unpack them into the system:
+#
+# for p in system-header system-library developer-library-lint \
+#          system-library-math system-library-math-header-math; \
+#   do tar jxf solaris11-sparc-$p-0.5.11-1.tar.bz2 -C / ; done
+
+# gnu-as/ld: On Solaris, GCC defaults to using Sun's assembler and linker
+# (in /usr/ccs/bin, from packages 'developer/build/make' and 'developer/linker'),
+# whose command line syntax differs from GNU binutils.  OTOH shouldn't this
+# only be the default on a Solaris *host*?
+CYGCONF_ARGS="
+	--enable-languages=c,c++,fortran
+	--enable-version-specific-runtime-libs
+	--with-gnu-as
+	--with-gnu-ld
+	--with-system-zlib
+"
+
+src_install() {
+	cd ${B}
+	cyginstall -j1
+
+	# Remove Cygwin-host libiberty.a
+	rm -f ${D}/usr/lib/libiberty.a
+
+	# This should be provided alongside libbfd (from binutils)
+	rm -f ${D}/usr/${TOOLCHAIN_TARGET}/lib/libiberty.*
+	rm -f ${D}/usr/${TOOLCHAIN_TARGET}/lib/sparcv9/libiberty.*
+
+	# conflicts with native gcc
+	rm -fr ${D}/usr/share/{gcc-*,info,locale,man/man7}
+}

@@ -1,0 +1,6 @@
+category: Devel
+requires: solaris11-sparc-gcc-core solaris11-sparc-gcc-g++ solaris11-sparc-gcc-fortran
+sdesc: "GCC for Solaris 11 SPARC toolchain (meta-package)"
+ldesc: "The GNU Compiler Collection includes front ends for C, C++,
+Objective-C, Fortran, Java, and Ada, as well as libraries for these
+languages (libstdc++, libgcj,...)."

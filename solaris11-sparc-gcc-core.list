@@ -1,0 +1,24 @@
+--exclude=c++ --exclude=objc --exclude=gcj --exclude=jni*.h
+usr/bin/*-cpp.exe
+usr/bin/*-gcc*
+usr/bin/*-gcov.exe
+usr/lib/gcc/*/*/sparcv9/*.o
+usr/lib/gcc/*/*/sparcv9/libgcc*
+usr/lib/gcc/*/*/sparcv9/libgcov.*
+usr/lib/gcc/*/*/sparcv9/libgomp.*
+usr/lib/gcc/*/*/sparcv9/libssp*
+usr/lib/gcc/*/*/cc1.exe
+usr/lib/gcc/*/*/collect2.exe
+usr/lib/gcc/*/*/*.o
+usr/lib/gcc/*/*/include-fixed/
+usr/lib/gcc/*/*/include/
+usr/lib/gcc/*/*/install-tools/
+usr/lib/gcc/*/*/libgcc*
+usr/lib/gcc/*/*/libgcov.*
+usr/lib/gcc/*/*/libgomp.*
+usr/lib/gcc/*/*/libssp*
+usr/lib/gcc/*/*/lto*.exe
+usr/share/doc/
+usr/share/man/man1/*-cpp.1*
+usr/share/man/man1/*-gcc.1*
+usr/share/man/man1/*-gcov.1*

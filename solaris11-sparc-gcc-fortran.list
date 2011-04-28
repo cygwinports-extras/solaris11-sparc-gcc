@@ -1,0 +1,6 @@
+usr/bin/*-gfortran.exe
+usr/lib/gcc/*/*/sparcv9/libgfortran*
+usr/lib/gcc/*/*/f951.exe
+usr/lib/gcc/*/*/finclude/
+usr/lib/gcc/*/*/libgfortran*
+usr/share/man/man1/*-gfortran.1.gz
